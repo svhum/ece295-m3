@@ -85,7 +85,7 @@ fxngen.write('OUTPUT1:LOAD INF')
 fxngen.write('OUTPUT2:LOAD INF')
 fxngen.write('UNIT:ANGL DEG')
 
-# Setup waveform generator
+# Setup waveform generator: 14 MHz sine
 fxngen.write('SOUR1:FUNCtion SIN')
 fxngen.write('SOUR1:FREQuency %e' % (14e6))
 fxngen.write('SOUR1:VOLTage %e' % (drive_amplitude))
@@ -94,6 +94,7 @@ fxngen.write('SOUR1:PHASe:SYNC')
 fxngen.write('SOUR1:PHASe +0.0')
 #fxngen.write('OUTPut1 ON')
 
+# Setup CH2 to be inverted copy
 fxngen.write('SOUR2:FUNCtion SIN')
 fxngen.write('SOUR2:FREQuency %e' % (14e6))
 fxngen.write('SOUR2:VOLTage %e' % (drive_amplitude))
@@ -135,6 +136,7 @@ V = float(supply.query('VOLT? (@2)'))
 Iactive = float(supply.query('MEAS:CURR? CH2'))
 Pactive = V*Iactive
 Vrms = float(scope.query(':MEAS:VRMS? CHAN1'))
+Vrms *= 100                     # Attenuator
 
 print('Supply voltage:', V, 'V')
 print('Current draw (idle):', Iidle, 'A')
@@ -181,6 +183,7 @@ A_dBV[4] = float(scope.query(':MARK:Y1P?'))
 
 # Calculate power spectrum
 n = arange(1, 6)
+A_dBV += 40                     # Attenuator
 Pcoeffs = (10**(A_dBV/20))**2/50
 P_dBW = 10*log10(Pcoeffs)
 print('Measured harmonics (dBV):', A_dBV)
@@ -225,6 +228,7 @@ for k in range(N):
     fxngen.write('OUTPut2:POL INV')
     time.sleep(1)
     Vout[k] = float(scope.query(':MEAS:VRMS? CHAN1'))
+    Vout[k] *= 100              # Attenuator
     print('Frequency = %f MHz, V = %f Vrms' % (freq[k]/1e6, Vout[k]))
 print('Done')
     
