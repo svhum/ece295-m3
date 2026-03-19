@@ -92,7 +92,7 @@ fxngen.write('OUTPut1 ON')
 fxngen.write('SOUR2:FUNCtion SIN')
 fxngen.write('SOUR2:VOLTage:AMPL %e' % (drive_amplitude))
 fxngen.write('SOUR2:VOLTage:OFFS +0.0')
-fxngen.write('SOUR2:PHASe -9.0E+01')
+fxngen.write('SOUR2:PHASe +9.0E+01')
 fxngen.write('OUTPut2 ON')
 
 # Setup acquisition
@@ -154,7 +154,7 @@ for k in range(N):
 # Set up instruments for 1 kHz test point (USB)
 fxngen.write('SOUR1:FREQuency %e' % (1e3))
 fxngen.write('SOUR2:FREQuency %e' % (1e3))
-fxngen.write('SOUR2:PHASe +9.0E+01')
+fxngen.write('SOUR2:PHASe -9.0E+01')
 fxngen.write('SOUR2:PHASe:SYNC')
 scope.write(':TRIG:EDGE:SOURce CHAN1')
 #print(scope.query(':TRIGger:EDGE:LEVel?'))
