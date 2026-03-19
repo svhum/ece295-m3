@@ -106,9 +106,10 @@ scope.write('TRIGger:SOURce CHANnel1')
 
 print('\nYou should have a LO signals on CH1 and CH2 at a frequency of %.1f MHz.' % (freq[0]/1e6))
 
-phdiff = float(scope.query(':MEAS:PHASe? CHAN2'))
-if (phdiff > 0):
-    print('WARNING: The phase difference seems to be backwards (LO_90 leads LO_0 when it should lag). This should be corrected.')
+#phdiff = float(scope.query(':MEAS:PHASe? CHAN2'))
+phdiff = float(scope.query(':MEAS:PHASe? CHAN2,CHAN1'))
+if (phdiff < 0):
+    print('WARNING: The phase difference seems to be backwards (LO_90 lags LO_0 when it should ). This should be corrected.')
     
 user_prompt()
 

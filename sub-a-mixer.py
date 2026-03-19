@@ -89,6 +89,7 @@ fxngen.write('UNIT:ANGL DEG')
 # Setup waveform generator
 fxngen.write('SOUR1:FUNCtion SIN')
 fxngen.write('SOUR1:FREQuency +1.4E+07')
+#fxngen.write('SOUR1:FREQuency +1.0E+04')
 fxngen.write('SOUR1:VOLTage:HIGH +3.3')
 fxngen.write('SOUR1:VOLTage:LOW +0.0')
 fxngen.write('SOUR1:PHASe:SYNC')
@@ -97,10 +98,11 @@ fxngen.write('OUTPut1 ON')
 
 fxngen.write('SOUR2:FUNCtion SIN')
 fxngen.write('SOUR2:FREQuency +1.4E+07')
+#fxngen.write('SOUR2:FREQuency +1.0E+04')
 fxngen.write('SOUR2:VOLTage:HIGH +3.3')
 fxngen.write('SOUR2:VOLTage:LOW +0.0')
 fxngen.write('SOUR2:PHASe:SYNC')
-fxngen.write('SOUR2:PHASe -90.0')
+fxngen.write('SOUR2:PHASe +90.0')
 fxngen.write('OUTPut2 ON')
 
 # Setup acquisition
@@ -115,14 +117,14 @@ print('and the 2 signals occupy most of the screen.')
 user_prompt()
 check_scales()
 
-phdiff = float(scope.query(':MEAS:PHASe? CHAN1'))
+phdiff = float(scope.query(':MEAS:PHASe? CHAN2,CHAN1'))
 print('Measured phase shift between I and Q for 10 kHz message signal:', phdiff, 'deg')
 
-if (phdiff > 0):
-    print('WARNING: the phase shift is leading when it should be lagging. Ensure the function')
+if (phdiff < 0):
+    print('WARNING: the phase shift is lagging when it should be leading. Ensure the function')
     print('generator and oscilloscope are connected as shown in the wiring diagram.')
 else:
-    print('Q is lagging I as expected.')
+    print('Q is leading I as expected.')
 print('About to initiate frequency sweep.')
 user_prompt()
 
@@ -159,7 +161,8 @@ for k in range(N2):
     #scope.write(':SINGle')
     ampl_i[k] = float(scope.query(':MEAS:VPP? CHAN1'))
     ampl_q[k] = float(scope.query(':MEAS:VPP? CHAN2'))
-    phdiff[k] = float(scope.query(':MEAS:PHASe? CHAN1'))
+    #phdiff[k] = float(scope.query(':MEAS:PHASe? CHAN1'))
+    phdiff[k] = float(scope.query(':MEAS:PHASe? CHAN2,CHAN1'))
     print('Frequency point %d/%d, f=%.4f MHz: %f %f %f' % (k+1, N, freq[k]/1e6, ampl_i[k], ampl_q[k], phdiff[k]))
 
 scope.write(':TIMebase:SCAL +5.0E-05') 
@@ -173,7 +176,8 @@ for k in range(N2, N3):
     #scope.write(':SINGle')
     ampl_i[k] = float(scope.query(':MEAS:VPP? CHAN1'))
     ampl_q[k] = float(scope.query(':MEAS:VPP? CHAN2'))
-    phdiff[k] = float(scope.query(':MEAS:PHASe? CHAN1'))
+    #phdiff[k] = float(scope.query(':MEAS:PHASe? CHAN1'))
+    phdiff[k] = float(scope.query(':MEAS:PHASe? CHAN2,CHAN1'))
     print('Frequency point %d/%d, f=%.4f MHz: %f %f %f' % (k+1, N, freq[k]/1e6, ampl_i[k], ampl_q[k], phdiff[k]))
 
 scope.write(':TIMebase:SCAL +5.0E-06') 
@@ -187,7 +191,8 @@ for k in range(N3, N):
     #scope.write(':SINGle')
     ampl_i[k] = float(scope.query(':MEAS:VPP? CHAN1'))
     ampl_q[k] = float(scope.query(':MEAS:VPP? CHAN2'))
-    phdiff[k] = float(scope.query(':MEAS:PHASe? CHAN1'))
+    #phdiff[k] = float(scope.query(':MEAS:PHASe? CHAN1'))
+    phdiff[k] = float(scope.query(':MEAS:PHASe? CHAN2,CHAN1'))
     print('Frequency point %d/%d, f=%.4f MHz: %f %f %f' % (k+1, N, freq[k]/1e6, ampl_i[k], ampl_q[k], phdiff[k]))
 
 print('Done')
@@ -234,5 +239,5 @@ ax.set_xlabel('Message frequency [Hz]')
 ax.set_ylabel('Phase shift between I and Q [deg]')
 ax.semilogx(fm, phdiff)
 ax.grid(True)
-ax.set_ylim((-200, 200))
+ax.set_ylim((80, 100))
 savefig('balance_phase.png')
