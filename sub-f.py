@@ -136,7 +136,7 @@ V = float(supply.query('VOLT? (@2)'))
 Iactive = float(supply.query('MEAS:CURR? CH2'))
 Pactive = V*Iactive
 Vrms = float(scope.query(':MEAS:VRMS? CHAN1'))
-Vrms *= 100                     # Attenuator
+Vrms *= 50                     # Attenuator
 
 print('Supply voltage:', V, 'V')
 print('Current draw (idle):', Iidle, 'A')
@@ -184,7 +184,7 @@ A_dBV[4] = float(scope.query(':MARK:Y1P?'))
 # Calculate power spectrum
 n = arange(1, 6)
 A_dBV += 40                     # Attenuator
-Pcoeffs = (10**(A_dBV/20))**2/50
+Pcoeffs = ((10**(A_dBV/20))/2)**2/50
 P_dBW = 10*log10(Pcoeffs)
 print('Measured harmonics (dBV):', A_dBV)
 
@@ -228,7 +228,7 @@ for k in range(N):
     fxngen.write('OUTPut2:POL INV')
     time.sleep(1)
     Vout[k] = float(scope.query(':MEAS:VRMS? CHAN1'))
-    Vout[k] *= 100              # Attenuator
+    Vout[k] *= 50              # Attenuator
     print('Frequency = %f MHz, V = %f Vrms' % (freq[k]/1e6, Vout[k]))
 print('Done')
     
